@@ -1,0 +1,42 @@
+{
+  "name": "Duelo en Tabernas",
+  "short_name": "Duelo en Tabernas",
+  "description": "Juego de reflejos del oeste: cuando salga «¡DISPARA!», toca antes que tu rival. Contra la máquina, para dos en el mismo móvil o mide tus reflejos.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3d1c4b",
+  "theme_color": "#3d1c4b",
+  "lang": "es",
+  "categories": [
+    "games"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

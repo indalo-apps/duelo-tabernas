@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<!--
+  Duelo en Tabernas
+  © 2026 Adela Moreno Vega y Carlos Moreno Otto. Todos los derechos reservados.
+  Prohibida la copia, modificación o distribución total o parcial sin autorización de los autores.
+  https://indalo-apps.github.io/duelo-tabernas/
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="app-version" content="1.0">
+<meta name="theme-color" content="#3d1c4b">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Duelo en Tabernas">
+<title>Duelo en Tabernas</title>
+<meta name="author" content="Adela Moreno Vega y Carlos Moreno Otto">
+<meta name="description" content="Juego de reflejos del oeste: cuando salga «¡DISPARA!», toca antes que tu rival. Contra la máquina, para dos en el mismo móvil o mide tus reflejos. Autores: Adela Moreno Vega y Carlos Moreno Otto.">
+<meta name="copyright" content="© 2026 Adela Moreno Vega y Carlos Moreno Otto. Todos los derechos reservados.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Duelo en Tabernas">
+<meta property="og:title" content="Duelo en Tabernas">
+<meta property="og:description" content="Duelo del oeste en el desierto de Tabernas: toca antes que tu rival, pero ni un instante antes de tiempo. Para uno o dos jugadores. Gratis y sin registrarse.">
+<meta property="og:url" content="https://indalo-apps.github.io/duelo-tabernas/">
+<meta property="og:image" content="https://indalo-apps.github.io/duelo-tabernas/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Duelo en Tabernas: dos pistoleros frente a frente al atardecer entre montañas del desierto">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--bg:#fbf1e6;--card:#ffffff;--ink:#3a1d17;--ink2:#6e4b40;--soft:#f5e2cf;--line:#e8cdb3;--acc:#a9442a;--acc-ink:#fff;--link:#9a3a20;--focus:#2563eb;color-scheme:light}
+:root[data-theme="dark"]{--bg:#1d1020;--card:#2b1a2e;--ink:#fbeee2;--ink2:#d2b8aa;--soft:#3a2540;--line:#4d3352;--acc:#f2a65a;--acc-ink:#2a1205;--link:#ffb27a;--focus:#ffb27a;color-scheme:dark}
+#juego{background:#3d1c4b}
+
+/* ===== Piezas comunes de los juegos (indalo-apps) ===== */
+*{box-sizing:border-box}
+html[data-fs="s"]{font-size:15px} html,html[data-fs="m"]{font-size:17px} html[data-fs="l"]{font-size:19px} html[data-fs="xl"]{font-size:21px} html[data-fs="xxl"]{font-size:24px}
+html,body{margin:0;height:100%}
+body{font-family:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,"Nunito",sans-serif;background:var(--bg);color:var(--ink);
+  -webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overscroll-behavior:none;touch-action:manipulation}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.muted{color:var(--ink2)}
+h1,h2,h3{line-height:1.15}
+
+/* Pantalla de menú */
+#menu{min-height:100%;display:flex;flex-direction:column;align-items:center;
+  padding:calc(12px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.m-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;flex:1}
+.m-top{display:flex;justify-content:flex-end;min-height:48px}
+.icon-btn{width:48px;height:48px;border-radius:50%;border:0;background:var(--card);color:var(--ink);display:grid;place-items:center;font-size:1.35rem;
+  box-shadow:0 2px 10px -4px rgb(0 0 0 / .35)}
+.icon-btn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.m-hero{text-align:center;margin:4px 0 18px}
+.m-hero img{width:96px;height:96px;border-radius:22px;box-shadow:0 10px 30px -12px rgb(0 0 0 / .5)}
+.m-hero h1{margin:12px 0 4px;font-size:2rem;font-weight:900;letter-spacing:-.02em}
+.m-hero p{margin:0;color:var(--ink2);font-size:1rem}
+.modes{display:flex;flex-direction:column;gap:12px}
+.mode{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;border-radius:20px;padding:14px 16px;min-height:72px;
+  background:var(--card);color:var(--ink);box-shadow:0 4px 16px -10px rgb(0 0 0 / .45)}
+.mode .em{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.6rem;background:var(--soft)}
+.mode b{display:block;font-size:1.1rem}
+.mode span.d{display:block;color:var(--ink2);font-size:.88rem;margin-top:2px}
+.mode.main{background:var(--acc);color:var(--acc-ink)}
+.mode.main span.d{color:inherit;opacity:.85}
+.mode.main .em{background:rgb(255 255 255 / .18)}
+.records{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0 0}
+.rec{background:var(--soft);border-radius:99px;padding:7px 14px;font-weight:700;font-size:.9rem}
+.m-foot{margin-top:auto;padding-top:20px;text-align:center}
+.ver{background:none;border:0;color:var(--ink2);text-decoration:underline;text-underline-offset:3px;padding:12px 8px;min-height:44px;font-size:.88rem}
+
+/* Botones */
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:99px;padding:11px 20px;font-weight:800;min-height:44px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Aviso amarillo de instalar */
+.install-banner{display:flex;align-items:center;gap:10px;background:#ffe066;color:#2b2100;border:1.5px solid #e6bf2e;border-radius:14px;padding:10px 6px 10px 12px;margin-bottom:16px;box-shadow:0 6px 18px -10px rgb(0 0 0 / .4)}
+:root[data-theme="dark"] .install-banner{background:#5a4706;color:#fff3c4;border-color:#8a6e12}
+.install-banner img{flex:none;width:38px;height:38px;border-radius:9px}
+.install-banner div{flex:1;min-width:0;font-size:.9rem;line-height:1.3}
+.install-banner b{display:block;font-size:.98rem}
+.install-banner .btn{background:#2b2100;color:#ffe066;padding:10px 14px;font-size:.9rem}
+:root[data-theme="dark"] .install-banner .btn{background:#ffe066;color:#2b2100}
+.install-banner .x{flex:none;width:44px;height:44px;border:0;background:none;font-size:1.5rem;color:inherit}
+@media (max-width:420px){.install-banner div span{display:none}}
+
+/* Hojas (ventanas que suben desde abajo) */
+.sheet-bg{position:fixed;inset:0;background:rgb(5 10 18 / .55);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);color:var(--ink);width:100%;max-width:560px;max-height:88%;overflow-y:auto;border-radius:20px 20px 0 0;position:relative;
+  padding:10px max(18px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px));animation:up .22s ease-out;outline:none}
+.sheet.drag{transition:none}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.sheet h2{margin:0 52px 4px 0;font-size:1.4rem}
+.x-close{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:0;background:var(--soft);color:var(--ink);font-size:1.2rem;font-weight:800}
+.sheet-nav{display:flex;gap:8px;margin-top:18px}
+.sheet-nav .btn{flex:1}
+.set-group{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.set-group h3{margin:0;font-size:1rem}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,1fr));background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:3px;gap:2px}
+.seg button{border:0;background:none;padding:8px 10px;border-radius:9px;font-size:.85rem;font-weight:700;color:var(--ink2);min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgb(0 0 0 / .2)}
+.about{display:flex;align-items:center;gap:12px}.about img{border-radius:11px}
+.disclaimer{background:#fff4d1;color:#4a3800;border:1px solid #f0d27a;border-radius:12px;padding:10px 12px;font-size:.88rem;line-height:1.45}
+:root[data-theme="dark"] .disclaimer{background:#3d3208;color:#fff0bf;border-color:#6b5713}
+.sheet a{color:var(--link)}
+.lnk{background:none;border:0;padding:10px 0;min-height:44px;color:var(--link);text-decoration:underline;text-underline-offset:3px;font-weight:700;text-align:left}
+.nov h4{margin:14px 0 4px}
+.nov ul{margin:0;padding-left:20px} .nov li{margin:3px 0}
+.steps{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:st}
+.steps li{display:flex;gap:12px;align-items:flex-start;background:var(--soft);border-radius:12px;padding:10px 12px;counter-increment:st}
+.steps li::before{content:counter(st);flex:none;width:26px;height:26px;border-radius:50%;background:var(--acc);color:var(--acc-ink);display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.steps svg{width:20px;height:20px;vertical-align:-4px;stroke:var(--link);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kbd{display:inline-block;border:1px solid var(--line);background:var(--card);border-radius:6px;padding:0 6px;font-weight:700}
+.hintbox{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:.9rem}
+.howto{margin:8px 0 0;padding-left:20px}.howto li{margin:6px 0}
+#barra-act{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));z-index:60;background:var(--acc);color:var(--acc-ink);font-weight:800;font-size:.9rem;padding:9px 16px;border-radius:999px;box-shadow:0 6px 20px -8px rgb(0 0 0 / .5)}
+
+/* Pantalla de juego */
+#juego{position:fixed;inset:0;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#juego canvas{display:block;width:100%;height:100%}
+.hud-btn{position:absolute;z-index:5;width:48px;height:48px;border-radius:50%;border:0;background:rgb(0 0 0 / .35);color:#fff;font-size:1.3rem;font-weight:800;display:grid;place-items:center;backdrop-filter:blur(4px)}
+.over{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;padding:20px;background:rgb(0 0 0 / .45)}
+.over[hidden]{display:none}
+.card{background:var(--card);color:var(--ink);border-radius:24px;padding:22px 20px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 50px -20px rgb(0 0 0 / .6);animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.92);opacity:0}}
+.card h2{margin:0 0 6px;font-size:1.6rem}
+.card .big{font-size:3rem;font-weight:900;margin:6px 0;font-variant-numeric:tabular-nums}
+.card .row{justify-content:center;margin-top:16px}
+.card .btn{min-width:130px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<main id="app">
+<section id="menu" aria-labelledby="titulo">
+ <div class="m-wrap">
+  <div class="m-top"><button id="gear" class="icon-btn" aria-label="Ajustes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button></div>
+  <div id="install-slot"></div>
+  <div class="m-hero"><img src="icon-192.png" alt="" width="96" height="96"><h1 id="titulo">Duelo en Tabernas</h1><p>Duelo del oeste en el desierto: dispara el primero, pero no antes de tiempo</p></div>
+  <div class="modes">
+   <button class="mode main" id="b-ia"><span class="em" aria-hidden="true">🤠</span><span><b>Contra la banda</b><span class="d" id="ia-d">Vence a los 12 pistoleros, uno a uno</span></span></button>
+   <button class="mode" id="b-2j"><span class="em" aria-hidden="true">👥</span><span><b>Dos jugadores</b><span class="d">En el mismo móvil, cada uno en un extremo</span></span></button>
+   <button class="mode" id="b-ref"><span class="em" aria-hidden="true">⏱️</span><span><b>Reflejos</b><span class="d">5 intentos: ¿cuántas milésimas tardas?</span></span></button>
+   <button class="mode" id="b-como"><span class="em" aria-hidden="true">❓</span><span><b>Cómo se juega</b><span class="d">Espera, espera… ¡dispara!</span></span></button>
+  </div>
+  <div class="records" id="records"></div>
+
+  <div class="m-foot"><button class="ver" id="foot-ver">Ajustes</button></div>
+ </div>
+</section>
+<section id="juego" hidden aria-label="Partida">
+<canvas id="cv" role="img" aria-label="Duelo en el desierto"></canvas>
+<button class="hud-btn" id="b-salir" aria-label="Salir al menú" style="top:calc(10px + env(safe-area-inset-top,0px));left:calc(10px + env(safe-area-inset-left,0px))">✕</button>
+<div class="over" id="o-fin" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="f-t"><h2 id="f-t"></h2>
+ <div class="big" id="f-big"></div><p class="muted" id="f-sub" style="margin:0"></p><p id="f-extra" style="margin:10px 0 0;font-weight:700"></p>
+ <div class="row"><button class="btn" id="b-otra">Otra vez</button><button class="btn ghost" id="b-menu">Menú</button></div></div></div>
+
+</section>
+</main>
+<div id="sheet" hidden></div>
+<div id="barra-act" hidden>🔄 Actualizando a la versión nueva…</div>
+<div id="sr" class="sr-only" aria-live="polite"></div>
+<script>
+const CFG={"repo": "duelo-tabernas", "pre": "dt", "nombre": "Duelo en Tabernas", "corto": "Duelo en Tabernas", "color": "#3d1c4b", "aviso": "Juego de reflejos para entretenerse, de humor y sin violencia realista. El tiempo de reacción que se muestra es aproximado: depende de la pantalla y del móvil.", "soporte": "https://github.com/indalo-apps/duelo-tabernas/issues"};
+const NOVEDADES=[["1.0", ["🤠 Primera versión: duelos del oeste en el desierto de Tabernas", "🎯 Contra la máquina: 12 rivales, cada uno más rápido que el anterior", "👥 Dos jugadores en el mismo móvil, cada uno en un extremo", "⏱️ Reflejos: 5 intentos y tu tiempo medio en milésimas", "🌵 Distracciones que no cuentan: si disparas antes de tiempo, pierdes la ronda", "📲 Se instala en el móvil, funciona sin conexión y se actualiza sola"]]];
+window.APP={};
+/* ===================== PIEZAS COMUNES (indalo-apps) ===================== */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const P=CFG.pre;                       // prefijo de las claves guardadas en el móvil
+const VERSION=(document.querySelector('meta[name="app-version"]')||{}).content||"dev";
+const AUTORES="Adela Moreno Vega y Carlos Moreno Otto";
+const APP=window.APP||{};               // ganchos que define cada juego
+function anunciar(t){const r=$('#sr');r.textContent='';setTimeout(()=>{r.textContent=t},30)}
+function verCmp(a,b){const x=String(a).split('.').map(Number),y=String(b).split('.').map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){const d=(x[i]||0)-(y[i]||0);if(d)return d}return 0}
+const REDUCIR=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Márgenes del área segura (isla, barra de inicio) en píxeles, para dibujar en el lienzo
+const _sa=document.createElement('div');_sa.setAttribute('aria-hidden','true');
+_sa.style.cssText='position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)';
+document.body.appendChild(_sa);
+function safe(l){return parseFloat(getComputedStyle(_sa)['padding'+l[0].toUpperCase()+l.slice(1)])||0}
+
+/* ---------- Preferencias y aspecto ---------- */
+let PREF=Object.assign({fs:'m',theme:'auto',sound:true,vibra:true},store.get(P+'-pref-v1',{}));
+function guardarPref(){store.set(P+'-pref-v1',PREF)}
+function applyLook(){const r=document.documentElement;r.dataset.fs=PREF.fs;
+  const dark=PREF.theme==='dark'||(PREF.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  r.dataset.theme=dark?'dark':'light';
+  $$('meta[name="theme-color"]').forEach(m=>m.remove());
+  const m=document.createElement('meta');m.name='theme-color';m.content=getComputedStyle(r).getPropertyValue('--bg').trim()||CFG.color;document.head.appendChild(m);
+  if(APP.onLook)APP.onLook();}
+applyLook();matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyLook);
+
+/* ---------- Sonido y vibración ---------- */
+let AC=null;
+function audio(){if(!PREF.sound)return null;try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){AC=null}return AC}
+addEventListener('pointerdown',()=>{if(PREF.sound)audio()},{once:true,capture:true});
+function tono(f,d=.12,tipo='sine',vol=.18,f2=null,delay=0){const a=audio();if(!a)return;const t=a.currentTime+delay;
+  const o=a.createOscillator(),g=a.createGain();o.type=tipo;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02);}
+function ruido(d=.2,vol=.25,corte=1200){const a=audio();if(!a)return;const n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);
+  for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/n,2);const s=a.createBufferSource();s.buffer=b;const fl=a.createBiquadFilter();fl.type='lowpass';fl.frequency.value=corte;
+  const g=a.createGain();g.gain.value=vol;s.connect(fl).connect(g).connect(a.destination);s.start();}
+function vibrar(p){if(PREF.vibra&&navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+
+/* ---------- Hojas (ventanas que suben desde abajo) ---------- */
+let sheetOpener=null,skipPop=false;
+function openSheet(html,label){const s=$('#sheet');
+  s.innerHTML=`<div class="sheet-bg" data-close="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="${label}"><div class="grab"></div><button class="x-close" data-close="btn" aria-label="Cerrar">✕</button>${html}</div></div>`;
+  s.hidden=false;if(!sheetOpener||!document.body.contains(sheetOpener))sheetOpener=document.activeElement;
+  if(!(history.state&&history.state.sheet))history.pushState({sheet:1,juego:!!(history.state&&history.state.juego)},'');
+  const sh=s.querySelector('.sheet');sh.tabIndex=-1;sh.focus({preventScroll:true});if(APP.onSheet)APP.onSheet(true);}
+function closeSheet(fromPop){const s=$('#sheet');if(s.hidden)return;s.hidden=true;s.innerHTML='';
+  if(sheetOpener&&document.body.contains(sheetOpener))sheetOpener.focus({preventScroll:true});sheetOpener=null;
+  if(!fromPop&&history.state&&history.state.sheet){skipPop=true;history.back()}if(APP.onSheet)APP.onSheet(false);}
+addEventListener('popstate',()=>{if(skipPop){skipPop=false;return}if(!$('#sheet').hidden){closeSheet(true);return}if(APP.enPantallaJuego&&APP.enPantallaJuego())APP.salir(true)});
+addEventListener('keydown',e=>{if($('#sheet').hidden)return;if(e.key==='Escape'){e.preventDefault();closeSheet();return}
+  if(e.key==='Tab'){const f=[...$('#sheet').querySelectorAll('button:not([disabled]),a[href],input')];if(!f.length)return;const a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&(document.activeElement===a||document.activeElement.classList.contains('sheet'))){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}});
+$('#sheet').addEventListener('click',e=>{if(e.target.dataset.close||e.target.closest('[data-close="btn"]'))closeSheet()});
+(function(){let y0=null,dy=0,el=null;
+  $('#sheet').addEventListener('touchstart',e=>{el=e.target.closest('.sheet');if(!el||el.scrollTop>0){el=null;return}y0=e.touches[0].clientY;dy=0},{passive:true});
+  $('#sheet').addEventListener('touchmove',e=>{if(!el)return;dy=e.touches[0].clientY-y0;if(dy>0){el.classList.add('drag');el.style.transform=`translateY(${dy}px)`}},{passive:true});
+  $('#sheet').addEventListener('touchend',()=>{if(!el)return;el.classList.remove('drag');if(dy>90)closeSheet();else el.style.transform='';el=null});})();
+
+/* ---------- Ajustes ---------- */
+const FS=[['s','Pequeña'],['m','Normal'],['l','Grande'],['xl','Muy grande'],['xxl','Enorme']];
+const THEMES=[['auto','Automático'],['light','Claro'],['dark','Oscuro']];
+const segOnOff=(k,lbl)=>`<div class="seg" role="group" aria-label="${lbl}"><button data-onoff="${k}" data-val="1" aria-pressed="${!!PREF[k]}">Sí</button><button data-onoff="${k}" data-val="0" aria-pressed="${!PREF[k]}">No</button></div>`;
+function openSettings(){
+  openSheet(`<h2>Ajustes</h2>
+    <div class="set-group"><h3>Tamaño de letra</h3>
+      <div class="seg" role="group" aria-label="Tamaño de letra">${FS.map(([k,l])=>`<button data-fsz="${k}" aria-pressed="${PREF.fs===k}">${l}</button>`).join('')}</div></div>
+    <div class="set-group"><h3>Aspecto</h3>
+      <div class="seg" role="group" aria-label="Aspecto">${THEMES.map(([k,l])=>`<button data-theme-set="${k}" aria-pressed="${PREF.theme===k}">${l}</button>`).join('')}</div>
+      <p class="muted" style="margin:0;font-size:.82rem">«Automático» sigue el modo claro u oscuro del móvil.</p></div>
+    <div class="set-group"><h3>Sonidos</h3>${segOnOff('sound','Sonidos')}</div>
+    <div class="set-group"><h3>Vibración</h3>${segOnOff('vibra','Vibración')}
+      <p class="muted" style="margin:0;font-size:.82rem">El iPhone no deja vibrar a las apps web; en Android sí.</p></div>
+    <div class="set-group"><h3>Instalar en el móvil</h3>
+      ${isStandalone()?`<p class="muted" style="margin:0">✓ Ya la estás usando como app instalada.</p>`:`<button class="btn ghost" id="set-install" style="align-self:flex-start">📲 Cómo añadirla a la pantalla de inicio</button>`}</div>
+    <div class="set-group"><h3>Acerca de</h3>
+      <div class="about"><img src="icon-192.png" alt="" width="48" height="48"><div><b>${CFG.nombre}</b><br><span class="muted">Versión ${VERSION}</span></div></div>
+      <p style="margin:0">Creada por <b>Adela Moreno Vega</b> y <b>Carlos Moreno Otto</b>.</p>
+      <p class="muted" style="margin:0;font-size:.82rem">© ${new Date().getFullYear()} ${AUTORES}. Todos los derechos reservados. Uso personal gratuito.</p>
+      <a class="lnk" href="${CFG.soporte}" target="_blank" rel="noopener">✉️ Contacto y sugerencias</a>
+      <button class="lnk" id="set-priv">🔒 Privacidad</button></div>
+    <div class="set-group"><h3>Aviso</h3><div class="disclaimer">${CFG.aviso}</div></div>
+    <div class="set-group"><h3>Versión</h3>
+      <p style="margin:0">${CFG.corto} · <b>versión ${VERSION}</b> · Se actualiza sola cuando hay una versión nueva.</p>
+      <div class="row"><button class="btn ghost" id="set-upd">🔄 Buscar actualizaciones</button><button class="btn ghost" id="set-nov">Ver novedades</button></div>
+      <p class="muted" id="upd-msg" role="status" style="margin:0;font-size:.82rem">La app lo comprueba sola cada vez que la abres o vuelves a ella.</p></div>
+    <div class="sheet-nav"><button class="btn block" data-close="btn">Cerrar</button></div>`,'Ajustes');
+}
+function openPrivacy(){
+  openSheet(`<h2>Privacidad</h2>
+    <p>${CFG.corto} <b>no recoge ningún dato personal</b>. No hay cuentas, ni anuncios, ni compras, ni estadísticas de uso, ni rastreo.</p>
+    <p>Tus récords y ajustes se guardan <b>solo en tu móvil</b> (en el almacenamiento del navegador) y no se envían a nadie. Si borras los datos del navegador o desinstalas la app, se borran también.</p>
+    <p class="muted" style="font-size:.88rem">La app se descarga de GitHub Pages (GitHub, Inc.), que como cualquier servidor web recibe la dirección IP al abrirla. Después funciona sin conexión.</p>
+    <div class="sheet-nav"><button class="btn block" id="priv-back">Volver a Ajustes</button></div>`,'Privacidad');
+}
+$('#sheet').addEventListener('click',e=>{const t=e.target;let b;
+  if(b=t.closest('[data-fsz]')){PREF.fs=b.dataset.fsz;guardarPref();applyLook();$$('[data-fsz]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(b=t.closest('[data-theme-set]')){PREF.theme=b.dataset.themeSet;guardarPref();applyLook();$$('[data-theme-set]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(b=t.closest('[data-onoff]')){const k=b.dataset.onoff;PREF[k]=b.dataset.val==='1';guardarPref();$$(`[data-onoff="${k}"]`).forEach(x=>x.setAttribute('aria-pressed',x===b));
+    if(k==='sound'&&PREF.sound)tono(660,.12);if(k==='vibra')vibrar(30);return}
+  if(b=t.closest('#set-upd')){const m=$('#upd-msg');b.disabled=true;m.textContent='Comprobando…';
+    buscarVersion(true).then(v=>{b.disabled=false;
+      if(!EN_WEB)m.textContent='Solo se puede comprobar en la app publicada.';
+      else if(v==null)m.textContent='No se ha podido comprobar. ¿Tienes conexión a internet?';
+      else if(verCmp(v,VERSION)>0)m.textContent=`Hay una versión nueva (${v}). Se instalará al cerrar esta ventana.`;
+      else m.textContent=`✓ Tienes la última versión (${VERSION}).`});return}
+  if(t.closest('#set-nov')){verNovedades(null);return}
+  if(t.closest('#set-priv')){openPrivacy();return}
+  if(t.closest('#priv-back')){openSettings();return}
+  if(t.closest('#set-install')){openInstall();return}
+  if(t.closest('#inst-now')){installNow();return}
+  if(b=t.closest('#inst-copy')){const u=location.origin+location.pathname;(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{b.textContent='✓ Enlace copiado'}).catch(()=>{b.textContent=u});return}
+  if(APP.onSheetClick)APP.onSheetClick(t);
+});
+
+/* ---------- Instalar en la pantalla de inicio ---------- */
+const UA=navigator.userAgent;
+const IS_IOS=/iPhone|iPad|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const IS_ANDROID=/Android/.test(UA);
+const IN_APP=/FBAN|FBAV|Instagram|WhatsApp|Line\/|; wv\)|GSA\//.test(UA);
+const IOS_OTHER=IS_IOS&&/CriOS|FxiOS|EdgiOS/.test(UA);
+const IS_IPAD=/iPad/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let deferredPrompt=null;
+function iosVersion(){const sv=UA.match(/Version\/(\d+)(?:\.(\d+))?.*Safari/);if(sv&&!IOS_OTHER)return [+sv[1],+(sv[2]||0)];const os=UA.match(/OS (\d+)_(\d+)/);return os?[+os[1],+os[2]]:[0,0]}
+function isStandalone(){return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}
+function renderInstallBanner(){const slot=$('#install-slot');if(!slot)return;
+  if(isStandalone()||store.get(P+'-install-hide',0)||(!IS_IOS&&!IS_ANDROID&&!deferredPrompt)){slot.innerHTML='';return}
+  slot.innerHTML=`<div class="install-banner"><img src="icon-192.png" alt=""><div><b>📲 Instálala en tu móvil</b><span>Tenla en la pantalla de inicio, como una app.</span></div>
+    <button class="btn" id="ib-how">${deferredPrompt?'Instalar':'Ver cómo'}</button><button class="x" id="ib-x" aria-label="No mostrar más">×</button></div>`;}
+$('#install-slot').addEventListener('click',e=>{if(e.target.closest('#ib-how'))openInstall();if(e.target.closest('#ib-x')){store.set(P+'-install-hide',1);renderInstallBanner()}});
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;renderInstallBanner()});
+addEventListener('appinstalled',()=>{deferredPrompt=null;store.set(P+'-install-hide',1);closeSheet();renderInstallBanner()});
+async function installNow(){if(!deferredPrompt)return;deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;renderInstallBanner()}
+const SHARE_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+const DOTS_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
+const HDOTS_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>';
+const PLUS_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/></svg>';
+function openInstall(){
+  if(deferredPrompt&&!IS_IOS){installNow();return}
+  let body;
+  if(IN_APP){
+    body=`<p style="margin:12px 0 0">Has abierto el enlace dentro de otra app. Para instalarla, ábrela primero en el navegador:</p>
+      <ol class="steps"><li><span>Toca el menú ${DOTS_SVG} o el botón ${SHARE_SVG} de esta pantalla.</span></li>
+      <li><span>Elige <b>«Abrir en ${IS_IOS?'Safari':'Chrome'}»</b> (o «Abrir en el navegador»).</span></li>
+      <li><span>Allí, vuelve a tocar <b>⚙️ → Cómo añadirla a la pantalla de inicio</b>.</span></li></ol>`;
+  }else if(IS_IOS){
+    const [maj,min]=iosVersion(),dev=IS_IPAD?'iPad':'iPhone';
+    const ver=maj?`<p class="hintbox" style="margin:12px 0 0">Tu ${dev} tiene <b>iOS ${maj}${min?'.'+min:''}</b>. Estos son los pasos para esa versión.</p>`:'';
+    const end=`<li><span>Si aparece <b>«Abrir como app web»</b>, déjalo activado y pulsa <span class="kbd">Añadir</span> (arriba a la derecha).</span></li>
+      <li><span>Listo: el icono <b>${CFG.corto}</b> aparecerá en tu pantalla de inicio. Ábrela siempre desde ahí.</span></li>`;
+    if(maj&&(maj<16||(maj===16&&min<4))&&IOS_OTHER){
+      body=ver+`<p style="margin:12px 0 0">En esta versión de iOS solo se puede instalar desde <b>Safari</b>:</p>
+        <ol class="steps"><li><span>Copia el enlace y ábrelo en <b>Safari</b>. <button class="btn ghost" id="inst-copy" style="margin-top:6px;padding:8px 12px;font-size:.85rem">Copiar enlace</button></span></li>
+        <li><span>Toca el botón <b>Compartir</b> ${SHARE_SVG} de la barra de abajo.</span></li>
+        <li><span>Elige <b>«Añadir a pantalla de inicio»</b> ${PLUS_SVG}.</span></li>${end}</ol>`;
+    }else if(IOS_OTHER){
+      body=ver+`<p style="margin:12px 0 0">Desde este navegador (o desde Safari):</p>
+        <ol class="steps"><li><span>Toca el botón <b>Compartir</b> ${SHARE_SVG}, en la barra de direcciones o en el menú del navegador.</span></li>
+        <li><span>Elige <b>«Añadir a pantalla de inicio»</b> ${PLUS_SVG}. Si no está, toca <b>«Más»</b> o baja en la lista.</span></li>${end}</ol>`;
+    }else if(maj>=26){
+      body=ver+`<ol class="steps">
+        <li><span>Toca el botón <b>···</b> ${HDOTS_SVG} que está a la derecha de la barra de la dirección${IS_IPAD?' (arriba)':' (abajo)'}.</span></li>
+        <li><span>Toca <b>«Compartir»</b> ${SHARE_SVG}.</span></li>
+        <li><span>Toca <b>«Ver más»</b> si hace falta, baja en la lista y elige <b>«Añadir a pantalla de inicio»</b> ${PLUS_SVG}.</span></li>${end}</ol>`;
+    }else{
+      body=ver+`<ol class="steps">
+        <li><span>Toca el botón <b>Compartir</b> ${SHARE_SVG}${IS_IPAD?', arriba a la derecha.':', en el centro de la barra de abajo. Si no ves la barra, desliza un poco la página hacia arriba.'}</span></li>
+        <li><span>Baja en la lista y elige <b>«Añadir a pantalla de inicio»</b> ${PLUS_SVG}.</span></li>${end}</ol>`;
+    }
+  }else if(IS_ANDROID){
+    body=`<p style="margin:12px 0 0">En el móvil Android, con Chrome:</p>
+      <ol class="steps"><li><span>Toca el menú ${DOTS_SVG} (arriba a la derecha).</span></li>
+      <li><span>Elige <b>«Añadir a pantalla de inicio»</b> o <b>«Instalar aplicación»</b>.</span></li>
+      <li><span>Pulsa <span class="kbd">Instalar</span>. El icono aparecerá en tu pantalla de inicio.</span></li></ol>`;
+  }else{
+    body=`<p style="margin:12px 0 0">Está pensada sobre todo para el móvil: abre este mismo enlace en el teléfono y sigue los pasos que salen allí.</p>
+      <ol class="steps"><li><span>En el ordenador también se puede instalar con Chrome o Edge: busca el icono de instalar ${PLUS_SVG} a la derecha de la barra de direcciones.</span></li></ol>`;
+  }
+  openSheet(`<div class="about"><img src="icon-192.png" alt="" width="56" height="56"><div><h2 style="margin:0">Instalar la app</h2><span class="muted" style="font-size:.82rem">Gratis, sin tienda y sin registrarse</span></div></div>
+    ${body}
+    <p class="muted" style="font-size:.82rem;margin:12px 0 0">Una vez instalada se abre a pantalla completa, funciona sin conexión y se actualiza sola.</p>
+    <div class="sheet-nav">${deferredPrompt?`<button class="btn" id="inst-now">Instalar ahora</button>`:''}<button class="btn ${deferredPrompt?'ghost':'block'}" data-close="btn">Entendido</button></div>`,'Instalar en el móvil');
+}
+
+/* ---------- Actualización automática ---------- */
+function verNovedades(desde){
+  const todas=NOVEDADES.filter(([v])=>!desde||verCmp(v,desde)>0);if(!todas.length)return;
+  openSheet(`<h2>${desde?'¡La app se ha actualizado!':'Novedades'}</h2>
+    <div class="nov">${todas.slice(0,4).map(([v,items])=>`<h4>Versión ${v}</h4><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`).join('')}</div>
+    <div class="sheet-nav"><button class="btn block" data-close="btn">Entendido</button></div>`,'Novedades');
+}
+const EN_WEB=/\.github\.io$/.test(location.hostname)||location.hostname==='localhost';
+let actPendiente=false;
+// Nunca se recarga con una ventana abierta ni con una partida empezada
+function seguroRecargar(){if(!$('#sheet').hidden)return false;if(APP.enPartida&&APP.enPartida())return false;return true}
+function actualizar(){if(!seguroRecargar()){actPendiente=true;return}
+  $('#barra-act').hidden=false;setTimeout(()=>location.replace(location.pathname+'?u='+Date.now()),900);}
+let lastCheck=0;
+async function buscarVersion(force){
+  if(!EN_WEB)return null;if(!force&&Date.now()-lastCheck<4000)return null;lastCheck=Date.now();
+  try{const txt=await (await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();
+    const m=txt.match(/name="app-version" content="([^"]+)"/);
+    if(m&&verCmp(m[1],VERSION)>0){actualizar();return m[1]}return VERSION;}catch(e){return null}}
+function revisarPendiente(){if(actPendiente&&seguroRecargar()){actPendiente=false;actualizar()}}
+new MutationObserver(revisarPendiente).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','class']});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')buscarVersion()});
+setInterval(buscarVersion,90*1000);addEventListener('focus',()=>buscarVersion());addEventListener('pageshow',()=>buscarVersion());
+
+/* ---------- Arranque común ---------- */
+function arrancarComun(){
+  $('#gear').addEventListener('click',openSettings);
+  $('#foot-ver').textContent=`Ajustes · Versión ${VERSION} · Novedades`;
+  $('#foot-ver').addEventListener('click',openSettings);
+  renderInstallBanner();
+  if(/[?&]instalar\b/.test(location.search)&&!isStandalone()){history.replaceState(null,'',location.pathname);setTimeout(openInstall,400)}
+  if(/[?&]u=/.test(location.search))history.replaceState(history.state,'',location.pathname);
+  const vista=store.get(P+'-version',null);store.set(P+'-version',VERSION);
+  if(vista&&verCmp(VERSION,vista)>0)setTimeout(()=>verNovedades(vista),600);
+  buscarVersion();
+  if(EN_WEB&&'serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{}));
+}
+
+/* ===================== JUEGO ===================== */
+/* Duelo en Tabernas: reflejos del oeste */
+const cv=$('#cv'),ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1;
+const BANDA=[['Paco el Lento',520],['Curro Siesta',485],['El Botijo',455],['Manolo Polvo',430],['La Chumbera',405],['El Rambla',385],
+  ['Doña Mesa',365],['El Buitre',345],['Sombra de Tabernas',325],['La Ventisca',305],['El Relámpago',285],['El Fantasma',265]];
+const AZUL='#2f7de1',ROJO='#e0483b';
+let SA={top:0,bottom:0};
+function medir(){SA={top:safe('top'),bottom:safe('bottom')};DPR=Math.min(window.devicePixelRatio||1,3);W=innerWidth;H=innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR)}
+addEventListener('resize',()=>{if(!$('#juego').hidden)medir()});
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const est={get banda(){return store.get(P+'-banda',0)},set banda(v){store.set(P+'-banda',v)},
+  get media(){return store.get(P+'-media',0)},set media(v){store.set(P+'-media',v)},
+  get mejor(){return store.get(P+'-mejor',0)},set mejor(v){store.set(P+'-mejor',v)}};
+
+let S=null,raf=0,ahora=0;
+function nuevo(modo){medir();S={modo,pts:[0,0],ronda:0,fase:'intro',rival:0,vencidos:0,tiempos:[],msg:'',msgMs:'',
+  tSenal:0,tYa:0,aiMs:0,senuelo:null,ganador:-1,tRes:0,caido:-1,disparo:-1,meta:modo==='2j'?3:modo==='ia'?2:5,adelantos:0};
+  ronda();}
+function nombre(i){if(S.modo==='2j')return i?'Jugador 2':'Jugador 1';if(S.modo==='ia')return i?BANDA[S.rival][0]:'Tú';return 'Tú'}
+function ronda(){const t=performance.now();S.ronda++;S.fase='espera';S.ganador=-1;S.caido=-1;S.disparo=-1;S.msg='';S.msgMs='';
+  S.tSenal=t+1100+rnd(1200,3600);S.senuelo=null;
+  if(S.modo!=='ref'&&(S.ronda>=2||S.modo==='2j')&&Math.random()<.45){const ts=Math.max(t+1000,S.tSenal-rnd(600,1500));S.senuelo={t:ts,on:false,x:-60,tipo:Math.random()<.6?'rodadora':'buitre'}}
+  if(S.modo==='ia'){const base=BANDA[S.rival][1];S.aiMs=Math.round(base+rnd(-30,40))}
+  anunciar(S.modo==='ref'?`Intento ${S.tiempos.length+1} de 5. Preparados…`:`Ronda ${S.ronda}. Preparados…`);
+  tono(392,.12,'triangle',.12);}
+
+function senal(t){S.fase='ya';S.tYa=t;tono(1318,.45,'triangle',.25);tono(1975,.35,'sine',.1);vibrar(25);anunciar('¡Dispara!')}
+function disparoSonido(){ruido(.28,.55,2600);tono(140,.22,'square',.18,45)}
+
+function toque(j,ts){if(!S)return;const now=performance.now();const t=(ts&&ts<=now+5&&ts>now-500)?ts:now;
+  if(S.fase==='espera'){// Se ha adelantado
+    if(S.modo==='ref'){S.fase='res';S.msg='¡Demasiado pronto!';S.msgMs='Espera a que salga «¡DISPARA!»';S.tRes=now;S.adelantos++;tono(200,.3,'sawtooth',.15,100);vibrar(80);anunciar('Demasiado pronto');
+      setTimeout(()=>{if(S&&S.fase==='res')ronda()},1500);return}
+    resolver(1-j,null,`¡${nombre(j)==='Tú'?'Te has':nombre(j)+' se ha'} adelantado!`);return}
+  if(S.fase==='ya'){const ms=Math.max(1,Math.round(t-S.tYa));
+    if(S.modo==='ref'){S.tiempos.push(ms);S.fase='res';S.tRes=now;S.disparo=0;S.msg=`${ms} ms`;S.msgMs=valorar(ms);disparoSonido();anunciar(`${ms} milésimas. ${S.msgMs}`);
+      setTimeout(()=>{if(!S)return;if(S.tiempos.length>=5)finRef();else ronda()},1400);return}
+    resolver(j,ms);}}
+function valorar(ms){return ms<200?'¡Increíble!':ms<250?'¡Rapidísimo!':ms<300?'¡Muy rápido!':ms<360?'Bien':ms<450?'Normalito':'Un poco lento'}
+
+function resolver(g,ms,motivo){S.fase='res';S.ganador=g;S.tRes=performance.now();S.pts[g]++;S.disparo=ms!=null||motivo?g:-1;S.caido=1-g;
+  disparoSonido();setTimeout(()=>{if(S&&S.caido>=0)tono(90,.25,'sine',.15)},350);
+  if(motivo){S.msg=motivo;S.msgMs=`Punto para ${nombre(g)==='Tú'?'ti':nombre(g)}`;tono(200,.3,'sawtooth',.12,100)}
+  else{S.msg=nombre(g)==='Tú'?'¡Le has ganado!':`¡Gana ${nombre(g)}!`;S.msgMs=`${ms} ms`}
+  vibrar(g===0||S.modo==='2j'?[30,30,30]:120);anunciar(`${S.msg} ${S.msgMs}`);
+  setTimeout(()=>{if(!S)return;if(S.pts[g]>=S.meta)finDuelo(g);else ronda()},1900);}
+
+function finDuelo(g){S.fase='fin';let tit,big,sub,extra,boton='Otra vez';
+  if(S.modo==='2j'){tit=`🏆 ¡Gana el ${nombre(g)}!`;big=`${S.pts[0]} – ${S.pts[1]}`;sub='Jugador 1 – Jugador 2';extra='';fanfarria()}
+  else if(g===0){S.vencidos++;if(S.vencidos>est.banda)est.banda=S.vencidos;
+    if(S.rival>=BANDA.length-1){tit='🌵 ¡Has limpiado Tabernas!';big=`${S.vencidos}/12`;sub='pistoleros vencidos';extra='Eres la leyenda del desierto.';fanfarria()}
+    else{tit=`¡Has vencido a ${BANDA[S.rival][0]}!`;big=`${S.vencidos}/12`;sub='pistoleros vencidos';extra=`Siguiente: ${BANDA[S.rival+1][0]}, más rápido todavía`;boton='Siguiente duelo';S.siguiente=true;tono(784,.2,'triangle',.2);tono(1046,.3,'triangle',.2,null,.15)}}
+  else{tit=`Te ha ganado ${BANDA[S.rival][0]}`;big=S.vencidos;sub=S.vencidos===1?'pistolero vencido':'pistoleros vencidos';extra=`Récord: ${est.banda} de 12`;tono(300,.5,'sawtooth',.1,120)}
+  mostrarFin(tit,big,sub,extra,boton);}
+function finRef(){S.fase='fin';const m=Math.round(S.tiempos.reduce((a,b)=>a+b,0)/S.tiempos.length),mj=Math.min(...S.tiempos);
+  const rec=!est.media||m<est.media;if(rec)est.media=m;if(!est.mejor||mj<est.mejor)est.mejor=mj;
+  mostrarFin(rec?'🏆 ¡Nuevo récord!':'Tus reflejos',`${m} ms`,'de media en 5 intentos',`Mejor intento: ${mj} ms · Récord de media: ${est.media} ms${S.adelantos?` · Adelantos: ${S.adelantos}`:''}`,'Otra vez');if(rec)fanfarria();}
+function fanfarria(){[523,659,784,1046].forEach((f,i)=>tono(f,.25,'triangle',.18,null,i*.12));vibrar([30,40,30,40,60])}
+function mostrarFin(t,b,s,e,boton){$('#f-t').textContent=t;$('#f-big').textContent=b;$('#f-sub').textContent=s;$('#f-extra').textContent=e;$('#b-otra').textContent=boton;
+  $('#o-fin').hidden=false;$('#b-otra').focus();anunciar(`${t}. ${b} ${s}. ${e}`)}
+
+/* ---------- Bucle ---------- */
+function paso(t){raf=requestAnimationFrame(paso);ahora=t;if(!S)return;
+  if(S.fase==='espera'){if(S.senuelo&&!S.senuelo.on&&t>=S.senuelo.t){S.senuelo.on=true;S.senuelo.t0=t;
+      if(S.senuelo.tipo==='buitre'){tono(1300,.18,'sawtooth',.12,700);tono(1200,.2,'sawtooth',.1,650,.22)}else ruido(.6,.08,500);
+      if(S.modo==='ia'&&Math.random()<.08){S.fase='x';setTimeout(()=>{if(S&&S.fase==='x'){S.fase='espera';resolver(0,null,`¡${BANDA[S.rival][0]} se ha adelantado!`)}},120)}}
+    if(t>=S.tSenal)senal(t);}
+  else if(S.fase==='ya'&&S.modo==='ia'&&t-S.tYa>=S.aiMs)resolver(1,S.aiMs);
+  dibujar(t);}
+
+/* ---------- Dibujo ---------- */
+function dibujar(t){ctx.setTransform(DPR,0,0,DPR,0,0);const hz=H*.6;
+  const sk=ctx.createLinearGradient(0,0,0,hz);sk.addColorStop(0,'#2a1240');sk.addColorStop(.55,'#b3455a');sk.addColorStop(1,'#f6b26b');ctx.fillStyle=sk;ctx.fillRect(0,0,W,hz+2);
+  // Sol
+  const sr=Math.min(W,H)*.17;const sg=ctx.createRadialGradient(W*.5,hz-sr*.35,sr*.2,W*.5,hz-sr*.35,sr*2.2);sg.addColorStop(0,'rgba(255,214,140,.55)');sg.addColorStop(1,'rgba(255,214,140,0)');
+  ctx.fillStyle=sg;ctx.fillRect(0,0,W,hz);ctx.fillStyle='#ffd889';ctx.beginPath();ctx.arc(W*.5,hz-sr*.35,sr,0,7);ctx.fill();
+  // Montañas de Tabernas (dos capas)
+  ctx.fillStyle='#8c3b3a';montes(hz,[0,.62,.08,.55,.18,.7,.3,.5,.42,.58,.55,.45,.68,.6,.8,.48,.92,.63,1,.52],H*.16);
+  ctx.fillStyle='#5b2531';montes(hz,[0,.35,.1,.42,.22,.25,.36,.38,.5,.2,.63,.33,.75,.22,.88,.4,1,.28],H*.1);
+  // Suelo
+  const sg2=ctx.createLinearGradient(0,hz,0,H);sg2.addColorStop(0,'#c97b48');sg2.addColorStop(1,'#7a3d23');ctx.fillStyle=sg2;ctx.fillRect(0,hz,W,H-hz);
+  ctx.strokeStyle='rgba(255,220,180,.12)';ctx.lineWidth=2;for(let i=1;i<7;i++){const y=hz+(H-hz)*(i*i/49);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+  // Pitas
+  pita(W*.08,hz+(H-hz)*.18,W*.05);pita(W*.93,hz+(H-hz)*.1,W*.04);
+  // Pistoleros
+  const pie=hz+(H-hz)*.32,alto=Math.min(H*.2,W*.42);
+  const kr=S&&S.fase==='res'||S&&S.fase==='fin'?Math.min(1,(performance.now()-S.tRes)/500):0;
+  for(const j of [0,1]){const caer=S&&S.caido===j?kr:0,disp=S&&S.disparo===j?kr:0,senal=S&&S.fase==='ya';
+    vaquero(j?W*.78:W*.22,pie,alto,j?-1:1,j?ROJO:AZUL,caer,disp,senal,t)}
+  // Distracción
+  if(S&&S.senuelo&&S.senuelo.on){const e=(t-S.senuelo.t0)/1600;if(e<1){if(S.senuelo.tipo==='rodadora')rodadora(-40+e*(W+80),pie-alto*.06,alto*.09,e*14);else buitre(W*(1.1-e*1.2),H*.18+Math.sin(e*9)*10,W*.06,t)}}
+  if(!S)return;
+  // Textos
+  const dos=S.modo==='2j';
+  if(dos){ctx.save();ctx.globalAlpha=.10;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H/2-1);ctx.restore();ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(0,H/2-1,W,2)}
+  const pinta=(fn)=>{if(dos){ctx.save();ctx.translate(W,H);ctx.rotate(Math.PI);fn(1);ctx.restore();fn(0)}else fn(-1)};
+  pinta(j=>{const yc=dos?H*.78:H*.27;const lado=j===-1?null:j;
+    if(S.fase==='espera'||S.fase==='x'){texto('Preparados…',W/2,yc,Math.min(W*.1,40),'#fff',.85)}
+    else if(S.fase==='ya'){const k=Math.min(1,(t-S.tYa)/90);texto('¡DISPARA!',W/2,yc,Math.min(W*.17,72)*(1.25-.25*k),'#ffe14d',1,true)}
+    else if(S.fase==='res'){let m=S.msg,ms=S.msgMs;
+      if(dos&&S.ganador>=0){const yo=lado;if(m.startsWith('¡Gana'))m=S.ganador===yo?'¡Has ganado!':'¡Has perdido!';
+        else if(m.includes('adelantado'))m=S.ganador===yo?`¡${nombre(1-yo)} se ha adelantado!`:'¡Te has adelantado!';}
+      texto(m,W/2,yc,Math.min(W*.085,34),'#fff',1,true);if(ms)texto(ms,W/2,yc+Math.min(W*.1,42),Math.min(W*.07,28),'#ffe9b0',1)}
+    // Marcador
+    const ym=dos?H-48-SA.bottom:Math.max(64,SA.top+64);
+    if(S.modo==='ref'){texto(`Intento ${Math.min(S.fase==='res'&&S.disparo===0?S.tiempos.length:S.tiempos.length+1,5)} de 5`,W/2,ym,17,'#fff',.9)}
+    else{const yo=lado===null?0:lado;const a=S.pts[yo],b=S.pts[1-yo];
+      texto(dos?`Tú ${puntos(a)}   ${puntos(b)} Rival`:`${puntos(a)}  vs  ${puntos(b)}`,W/2,ym,18,'#fff',.95);
+      if(!dos)texto(`${BANDA[S.rival][0]} · rival ${S.rival+1} de 12`,W/2,ym+24,14,'#ffe9b0',.9);
+      if(dos)texto(`${nombre(yo)} · toca en tu mitad`,W/2,ym+24,14,yo?'#ffb3ab':'#b9d6ff',.95)}});}
+const puntos=n=>Array.from({length:S.meta},(_,i)=>i<n?'●':'○').join('');
+function texto(s,x,y,sz,col,al=1,sombra){ctx.save();ctx.globalAlpha=al;ctx.font=`900 ${sz}px system-ui,-apple-system,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+  if(sombra){ctx.lineWidth=Math.max(3,sz*.12);ctx.strokeStyle='rgba(40,10,20,.7)';ctx.strokeText(s,x,y)}ctx.fillStyle=col;ctx.fillText(s,x,y);ctx.restore()}
+function montes(hz,pts,alt){ctx.beginPath();ctx.moveTo(0,hz+1);for(let i=0;i<pts.length;i+=2)ctx.lineTo(pts[i]*W,hz-pts[i+1]*alt);ctx.lineTo(W,hz+1);ctx.closePath();ctx.fill()}
+function pita(x,y,s){ctx.fillStyle='#4f5a2c';for(let k=-3;k<=3;k++){ctx.save();ctx.translate(x,y);ctx.rotate(k*.32);ctx.beginPath();ctx.moveTo(-s*.12,0);ctx.quadraticCurveTo(0,-s*1.6,s*.12,0);ctx.fill();ctx.restore()}}
+function rodadora(x,y,r,rot){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.strokeStyle='#9c7a4a';ctx.lineWidth=2;for(let k=0;k<7;k++){ctx.beginPath();ctx.ellipse(0,0,r,r*.55,k*.45,0,7);ctx.stroke()}ctx.restore()}
+function buitre(x,y,s,t){const a=Math.sin(t/90)*.5;ctx.strokeStyle='#1b0f14';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-s,y-s*a);ctx.quadraticCurveTo(x-s*.4,y-s*.4,x,y);ctx.quadraticCurveTo(x+s*.4,y-s*.4,x+s,y-s*a);ctx.stroke()}
+function vaquero(x,pie,h,dir,color,caer,disp,alerta,t){const u=h/100;ctx.save();ctx.translate(x,pie);
+  if(caer)ctx.rotate(-dir*caer*1.4);ctx.scale(dir,1);const os='#1b0f14';ctx.fillStyle=os;ctx.strokeStyle=os;ctx.lineCap='round';ctx.lineJoin='round';
+  // sombra
+  ctx.save();ctx.globalAlpha=.25*(1-caer);ctx.beginPath();ctx.ellipse(0,0,22*u,4*u,0,0,7);ctx.fill();ctx.restore();
+  ctx.lineWidth=9*u;ctx.beginPath();ctx.moveTo(-3*u,-46*u);ctx.lineTo(-9*u,-1*u);ctx.moveTo(4*u,-46*u);ctx.lineTo(10*u,-1*u);ctx.stroke();
+  ctx.fillRect(-14*u,-4*u,11*u,4*u);ctx.fillRect(5*u,-4*u,12*u,4*u);
+  ctx.beginPath();ctx.moveTo(-13*u,-80*u);ctx.lineTo(13*u,-80*u);ctx.lineTo(10*u,-44*u);ctx.lineTo(-10*u,-44*u);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#3b2418';ctx.fillRect(-11*u,-50*u,22*u,5*u);ctx.fillStyle='#d9a441';ctx.fillRect(-2*u,-50*u,4*u,5*u);ctx.fillStyle=os;
+  ctx.fillRect(9*u,-48*u,6*u,12*u);// funda
+  // pañuelo
+  ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(-8*u,-81*u);ctx.lineTo(8*u,-81*u);ctx.lineTo(0,-70*u);ctx.closePath();ctx.fill();ctx.fillStyle=os;
+  ctx.beginPath();ctx.arc(0,-89*u,8.5*u,0,7);ctx.fill();
+  // brazo de atrás
+  ctx.lineWidth=7*u;ctx.beginPath();ctx.moveTo(-10*u,-76*u);ctx.lineTo(-15*u,-52*u);ctx.stroke();
+  // brazo de disparar
+  const tens=alerta&&!disp&&!caer?Math.sin(t/40)*1.2*u:0;
+  if(disp){ctx.beginPath();ctx.moveTo(10*u,-76*u);ctx.lineTo(32*u,-73*u);ctx.stroke();ctx.fillRect(30*u,-77*u,16*u,5*u);ctx.fillRect(31*u,-74*u,5*u,9*u);
+    if(disp<.45){ctx.fillStyle='#ffe14d';ctx.beginPath();for(let k=0;k<10;k++){const a=k*Math.PI/5,r=(k%2?5:13)*u*(1.2-disp);ctx.lineTo(48*u+r*Math.cos(a)+6*u,-75*u+r*Math.sin(a))}ctx.fill();ctx.fillStyle=os}}
+  else{ctx.beginPath();ctx.moveTo(10*u,-76*u);ctx.lineTo(15*u+tens,-52*u);ctx.stroke();ctx.fillRect(10*u,-47*u,5*u,9*u)}
+  // sombrero (vuela si cae)
+  ctx.save();if(caer){ctx.translate(-caer*18*u,-caer*30*u);ctx.rotate(-caer*1.2)}
+  ctx.beginPath();ctx.ellipse(0,-96*u,18*u,3.5*u,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(-9*u,-96*u);ctx.lineTo(-8*u,-110*u);ctx.quadraticCurveTo(0,-106*u,8*u,-110*u);ctx.lineTo(9*u,-96*u);ctx.closePath();ctx.fill();
+  ctx.fillStyle=color;ctx.fillRect(-9*u,-100*u,18*u,3*u);ctx.restore();ctx.restore();}
+
+/* ---------- Pantallas y controles ---------- */
+function abrir(modo){$('#menu').hidden=true;$('#juego').hidden=false;$('#o-fin').hidden=true;history.pushState({juego:1},'');nuevo(modo);
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(paso);cv.setAttribute('aria-label',modo==='2j'?'Duelo para dos: el jugador 2 toca en la mitad de arriba y el jugador 1 en la de abajo':'Duelo en el desierto: toca la pantalla cuando salga «¡DISPARA!»');}
+function salir(fromPop){cancelAnimationFrame(raf);S=null;$('#juego').hidden=true;$('#menu').hidden=false;pintarMenu();
+  if(!fromPop&&history.state&&history.state.juego){skipPop=true;history.back()}$('#b-ia').focus();}
+APP.enPantallaJuego=()=>!$('#juego').hidden;
+APP.enPartida=()=>!!S&&(S.fase!=='fin'||!!S.siguiente);
+APP.salir=salir;
+APP.onSheet=ab=>{if(ab&&S&&(S.fase==='espera'||S.fase==='ya')){S.ronda--;S.pts=S.pts.slice();S.fase='pausa'}else if(!ab&&S&&S.fase==='pausa')ronda()};
+$('#juego').addEventListener('pointerdown',e=>{if(e.target.closest('button,.over'))return;e.preventDefault();if(!S)return;
+  const j=S.modo==='2j'&&e.clientY<H/2?1:0;toque(j,e.timeStamp)});
+addEventListener('keydown',e=>{if($('#juego').hidden||!$('#sheet').hidden||!S||!$('#o-fin').hidden)return;
+  if(e.key==='Escape'){e.preventDefault();salir();return}if(e.repeat)return;
+  if(S.modo==='2j'){if(e.key==='a'||e.key==='A'){e.preventDefault();toque(0,e.timeStamp)}else if(e.key==='l'||e.key==='L'){e.preventDefault();toque(1,e.timeStamp)}}
+  else if(e.key===' '||e.key==='Enter'){e.preventDefault();toque(0,e.timeStamp)}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&S&&(S.fase==='espera'||S.fase==='ya')){S.ronda--;S.fase='pausa'}else if(!document.hidden&&S&&S.fase==='pausa'&&$('#sheet').hidden)ronda()});
+$('#b-salir').addEventListener('click',()=>salir());$('#b-menu').addEventListener('click',()=>salir());
+$('#b-otra').addEventListener('click',()=>{$('#o-fin').hidden=true;if(S&&S.siguiente){S.siguiente=false;S.rival++;S.pts=[0,0];S.ronda=0;ronda()}else nuevo(S?S.modo:'ia')});
+$('#b-ia').addEventListener('click',()=>abrir('ia'));$('#b-2j').addEventListener('click',()=>abrir('2j'));$('#b-ref').addEventListener('click',()=>abrir('ref'));
+$('#b-como').addEventListener('click',()=>openSheet(`<h2>Cómo se juega</h2>
+  <ol class="howto"><li>Los dos pistoleros esperan quietos. Cuando aparezca <b>«¡DISPARA!»</b> (y suene la campana), <b>toca la pantalla</b> lo antes posible.</li>
+  <li>Si tocas <b>antes de tiempo</b>, pierdes la ronda. Cuidado con las <b>distracciones</b>: una rodadora o un buitre no cuentan.</li>
+  <li><b>Contra la banda</b>: gana 2 rondas para vencer a cada pistolero. Son 12, cada uno más rápido que el anterior.</li>
+  <li><b>Dos jugadores</b>: poned el móvil en la mesa, cada uno en un extremo. El jugador 1 toca en la mitad de abajo y el jugador 2 en la de arriba. Gana quien llegue a 3. Con teclado: <span class="kbd">A</span> y <span class="kbd">L</span>.</li>
+  <li><b>Reflejos</b>: 5 intentos y tu tiempo medio en milésimas de segundo.</li></ol>
+  <p class="muted" style="font-size:.85rem">El tiempo es aproximado: cada pantalla y cada móvil tardan un poco en reaccionar.</p>
+  <div class="sheet-nav"><button class="btn block" data-close="btn">¡Al desierto!</button></div>`,'Cómo se juega'));
+function pintarMenu(){const b=est.banda,m=est.media;
+  $('#ia-d').textContent=b?`Tu récord: ${b} de 12 pistoleros`:'Vence a los 12 pistoleros, uno a uno';
+  $('#records').innerHTML=(b?`<span class="rec">🤠 Banda: ${b}/12</span>`:'')+(m?`<span class="rec">⏱️ Reflejos: ${m} ms</span>`:'');}
+pintarMenu();
+
+arrancarComun();
+</script>
+</body>
+</html>
